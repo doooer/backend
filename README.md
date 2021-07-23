@@ -1,2 +1,2 @@
 # backend
-doooer backend (가제)
+doooer backend
