@@ -1,4 +1,4 @@
-package com.plog.web;
+package com.plog.doooer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
