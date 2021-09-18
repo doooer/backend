@@ -1,18 +1,18 @@
 package com.plog.doooer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plog.doooer.service.LoginRequestDTO;
+import com.plog.doooer.service.LoginResponseDTO;
 import com.plog.doooer.service.SignupRequestDTO;
 import com.plog.doooer.service.UserService;
-import com.plog.doooer.util.JwtUtil;
 
+import common.PlogException;
+import common.PlogExceptionEnum;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +30,6 @@ public class UserController {
 			@ApiImplicitParam(name = "password", value = "패스워드", required = true, defaultValue = "pw486"),
 			@ApiImplicitParam(name = "email", value = "이메일", required = true, defaultValue = "admin@doooer.io")})
 	public String signup(@RequestBody SignupRequestDTO signupRequestDTO) {
-		System.out.println(signupRequestDTO);
 		return userService.signup(signupRequestDTO);
 	}
 	
@@ -39,11 +38,23 @@ public class UserController {
 	@ApiImplicitParams({ 
 			@ApiImplicitParam(name = "email", value = "이메일", required = true, defaultValue = "admin@doooer.io"),
 			@ApiImplicitParam(name = "password", value = "패스워드", required = true, defaultValue = "pw486")})
-	public String getLoginForm(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
-		System.out.println(loginRequestDTO);
-		String token = userService.generateToken(loginRequestDTO);
+	public LoginResponseDTO getLoginForm(@RequestBody LoginRequestDTO loginRequestDTO) {
+		if (!loginRequestDTO.getPassword().equals("1234")) {
+			throw new PlogException(PlogExceptionEnum.SECURITY_02);
+		}
 		
-		return token;
+//		String token = userService.generateToken(loginRequestDTO);
+		
+		LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+//		
+//		loginResponseDTO.updateId(userService.getUserInfo(token).getId());
+//		loginResponseDTO.updateAuth(userService.getUserInfo(token).getAuth());
+//		loginResponseDTO.updateEmail(userService.getUserInfo(token).getEmail());
+//		loginResponseDTO.updateName(userService.getUserInfo(token).getName());
+//		loginResponseDTO.updatePrflImgId(userService.getUserInfo(token).getPrflImgId());
+//		loginResponseDTO.updateToken(token);
+//		
+		return loginResponseDTO;
 	}
 	
 }

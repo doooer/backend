@@ -13,12 +13,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Table(name = "tb_user")
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class UserEntity {
 
@@ -37,10 +41,10 @@ public class UserEntity {
 	private String password;
 
 	@Column(length = 255)
-	private String job_cd;
+	private String jobCd;
 	
 	@Column(length = 255)
-	private String prfl_img_id;
+	private String prflImgId;
 	 
 	@Column(length = 300)
 	private String introduce;
@@ -50,21 +54,33 @@ public class UserEntity {
 
 	@Column(updatable = false)
 	@CreatedDate
-	private LocalDateTime created_dt;
+	private LocalDateTime createdDt;
 	
 	@LastModifiedDate
-	private LocalDateTime updated_dt;
+	private LocalDateTime updatedDt;
 
 	@Builder
 	public UserEntity(String name, String password, String email, String job_cd, String prfl_img_id, String introduce, String auth, LocalDateTime created_dt, LocalDateTime updated_dt) { 
 		this.name = name; 
 		this.password = password;
 		this.email = email;
-		this.job_cd = job_cd;
-		this.prfl_img_id = prfl_img_id;
+		this.jobCd = job_cd;
+		this.prflImgId = prfl_img_id;
 		this.introduce = introduce;
 		this.auth = auth;
-		this.created_dt = created_dt;
-		this.updated_dt = updated_dt;
+		this.createdDt = created_dt;
+		this.updatedDt = updated_dt;
+	}
+	
+	public void updateAuth(String auth) {
+		this.auth = auth;
+	}
+	
+	public void updatePassword(String password) {
+		this.password = password;
+	}
+	
+	public void updateCreatedDt(LocalDateTime createdDt) {
+		this.createdDt = createdDt;
 	}
 }

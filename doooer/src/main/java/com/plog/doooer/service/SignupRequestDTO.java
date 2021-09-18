@@ -1,13 +1,14 @@
 package com.plog.doooer.service;
 
 import com.plog.doooer.domain.UserEntity;
-import com.sun.istack.NotNull;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class SignupRequestDTO {
 
@@ -15,9 +16,6 @@ public class SignupRequestDTO {
 	private String password;
 	private String email;
 	
-	public boolean isValid() {
-		return true;
-	}
     public UserEntity toEntity(){
         return UserEntity.builder()
                 .name(name)

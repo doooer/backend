@@ -24,12 +24,14 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
 	private UserService userService;
-	
-	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+	@Autowired
+	public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+	    this.userService = userService;
+	    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+	}
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -56,38 +58,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//.antMatchers("/api/authenticate").permitAll()
 			.antMatchers("/api/signup").permitAll() 
 			.antMatchers("/api/login").permitAll()
+			.antMatchers("/v2/api-docs",
+                    "/configuration/ui",
+                    "/swagger-resources/**",
+                    "/configuration/security",
+                    "/swagger-ui.html",
+                    "/webjars/**").permitAll()
+			.antMatchers("/api/sendEmail").permitAll()
+			.antMatchers("/api/checkKey").permitAll()
 			.anyRequest().authenticated()
-			.and().exceptionHandling()
+			//.and().exceptionHandling()
 			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
-
-	/* 제외 패턴 */
-//	@Override
-//	public void configure(WebSecurity web) {
-//		//web.ignoring().antMatchers("/css/**", "/js/**", "/img/**");
-//        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**");
-//	}
-	/* 패턴 등록 */
-//	@Override
-//	protected void configure(HttpSecurity http) throws Exception {
-//		http.csrf().disable().authorizeRequests() // 페이지 권한 설정
-//				.antMatchers("/api/login").permitAll()
-//				.anyRequest().hasRole("MEMBER")
-//				.and() // 로그인 설정
-//				.formLogin().loginPage("/api/login").defaultSuccessUrl("/api/userInfo")
-//				.loginProcessingUrl("/doLogin")//loginPage("/api/login")...permitAll()//.permitAll() .defaultSuccessUrl("/api/loginResult")//.permitAll()
-//				.and()
-//				//.logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/logout")) // 로그아웃
-//				//.logoutSuccessUrl("/api/logout/result").invalidateHttpSession(true)
-//				//.and() // 403 예외처리 핸들링
-//				//.exceptionHandling().accessDeniedPage("/user/denied");
-//				;
-//	}
-	
-	/* 인증 */
-//	@Override
-//	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
-//	}
 }

@@ -21,6 +21,9 @@ import com.plog.doooer.domain.UserEntity;
 import com.plog.doooer.respository.UserRepository;
 import com.plog.doooer.util.JwtUtil;
 
+import common.PlogException;
+import common.PlogExceptionEnum;
+
 @Service
 public class UserService implements UserDetailsService {
 	@Autowired
@@ -37,10 +40,14 @@ public class UserService implements UserDetailsService {
 			UserEntity user = signupRequestDTO.toEntity();
 			
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			user.setPassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
-						
-			user.setCreated_dt(LocalDateTime.now());
-			user.setAuth("MEMBER");
+			
+			//user.setPassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
+			//user.setCreatedDt(LocalDateTime.now());
+			//user.setAuth("MEMBER");
+			
+			user.updatePassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
+			user.updateCreatedDt(LocalDateTime.now());			
+			user.updateAuth("MEMBER");
 			
 			userRepository.save(user);
 		} catch (Exception e) {
@@ -51,10 +58,22 @@ public class UserService implements UserDetailsService {
 		
 		return "SUCCESS";
 	}
-
+	
+	public UserEntity getUserInfo(String token)  {
+		String userEmail = jwtUtil.extractUsername(token);
+		UserEntity userEntity = userRepository.findAllByEmail(userEmail);
+	
+		return userEntity;
+	}
+	
 	@Override
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByEmail(userEmail);
+		
+		if (userEntity == null) {
+			throw new PlogException(PlogExceptionEnum.SECURITY_02);
+		}
+		
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		
 		authorities.add(new SimpleGrantedAuthority(userEntity.getAuth()));
@@ -69,7 +88,8 @@ public class UserService implements UserDetailsService {
 					new UsernamePasswordAuthenticationToken(loginRequestDTO.getUserName(), loginRequestDTO.getPassword())
 			);
 		} catch (Exception ex) {
-			throw new Exception("inavalid username/password");
+			//throw new Exception("inavalid username/password");
+			throw new PlogException(PlogExceptionEnum.SECURITY_02);
 		}
 		
 		return jwtUtil.generateToken(loginRequestDTO.getUserName());

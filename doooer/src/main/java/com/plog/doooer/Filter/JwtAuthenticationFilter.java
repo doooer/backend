@@ -35,13 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (authorizationHeader != null && authorizationHeader.startsWith("plog")) {
 			token = authorizationHeader.substring(4);
 			userName = jwtUtil.extractUsername(token);
-			System.out.println(userName);
 		}
+
 		if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = userService.loadUserByUsername(userName);
-			
-			System.out.println(userDetails);
-			
+
 			if (jwtUtil.validateToken(token, userDetails)) {
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 				
