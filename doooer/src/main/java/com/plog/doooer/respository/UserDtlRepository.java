@@ -7,9 +7,7 @@ import com.plog.doooer.domain.UserDtlEntity;
 import com.plog.doooer.domain.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-	UserEntity findByEmail(String userEmail);
-	UserEntity findAllByEmail(String userEmail);
-	UserEntity findIdByEmail(String userEmail);
-	UserEntity findAllById(long id);
+public interface UserDtlRepository extends JpaRepository<UserDtlEntity, Long> {
+	UserDtlEntity findAllById(long id);
+//	UserDtlEntity findAllByEmail(String userEmail);
 }

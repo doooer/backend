@@ -48,6 +48,7 @@ public class JpaConfig {
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaProperties(additionalProperties());
+		
 		return em;
 	}
 
@@ -55,6 +56,7 @@ public class JpaConfig {
 	public PlatformTransactionManager transactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		
 		return transactionManager;
 	}
 
@@ -67,6 +69,7 @@ public class JpaConfig {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.hbm2ddl.auto", "update");
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+		
 		return properties;
 	}
 }

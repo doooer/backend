@@ -13,17 +13,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-/*@ToString 
-@AllArgsConstructor  
-*/
-
-//@
-@Table(name = "tb_user")
+@Table(name = "TB_USER")
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class UserEntity {
 
@@ -32,56 +31,71 @@ public class UserEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // mysql의 AUTO_INCREMENT를 그대로 사용
 	private Long id;
 
-	@Column(length = 20, nullable = false)
+	@Column(name = "name", length = 255, nullable = false)
 	private String name;
 
-	@Column(length = 40, unique = true, nullable = false)
+	@Column(name = "email", length = 255, unique = true, nullable = false)
 	private String email;
 
-	@Column(length = 40, nullable = false)
-	private String pw;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-	@Column(length = 20, nullable = false)
-	private String region;
+	@Column(name = "job_cd", length = 255)
+	private String jobCd;
 	
-	@Column(length = 20, nullable = false)
-	private String major;
+	@Column(name = "prfl_img_id", length = 255)
+	private String prflImgId;
+	 
+	@Column(name = "introduce", length = 300)
+	private String introduce;
 	
-	@Column(length = 40)
-	private String profile_img_id;
-	
-	@Column(length = 20)
-	private String number;
-	
-	@Column(length = 2)
-	private String number_open_yn;
-	
-	@Column(length = 2)
-	private String portfolio_open_yn;
-	
-	@Column(length = 2)
-	private String message_open_yn;
+	@Column(name = "auth")
+	private String auth;
 
-	@Column(updatable = false)
+	@Column(name = "created_dt", updatable = false)
 	@CreatedDate
-	private LocalDateTime created_dt;
+	private LocalDateTime createdDt;
 	
+	@Column(name = "updated_dt")
 	@LastModifiedDate
-	private LocalDateTime updated_dt;
+	private LocalDateTime updatedDt;
 
 	@Builder
-	public UserEntity(String name, String pw, String email, String region, String major, String profile_img_id, String number, String number_open_yn, String portfolio_open_yn, String  message_open_yn, LocalDateTime created_dt, LocalDateTime updated_dt) { 
+	public UserEntity(String name, String password, String email, String jobCd, String prflImgId, String introduce, String auth, LocalDateTime createdDt, LocalDateTime updatedDt) { 
 		this.name = name; 
-		this.pw = pw;
+		this.password = password;
 		this.email = email;
-		this.region = region; 
-		this.major = major; 
-		this.profile_img_id = profile_img_id; 
-		this.number = number; 
-		this.number_open_yn = number_open_yn;
-		this.portfolio_open_yn = portfolio_open_yn; 
-		this.message_open_yn = message_open_yn; 
-		this.created_dt = created_dt;
-		this.updated_dt = updated_dt;
-		}
+		this.jobCd = jobCd;
+		this.prflImgId = prflImgId;
+		this.introduce = introduce;
+		this.auth = auth;
+		this.createdDt = createdDt;
+		this.updatedDt = updatedDt;
+	}
+	
+	public void updateAuth(String auth) {
+		this.auth = auth;
+	}
+	
+	public void updatePassword(String password) {
+		this.password = password;
+	}
+	
+	public void updateName(String name) {
+		this.name = name;
+	}
+	
+	public void updateIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public void updatePrflImgId(String prflImgId) {
+		this.prflImgId = prflImgId;
+	}
+	public void updateJobCd(String jobCd) {
+		this.jobCd = jobCd;
+	}
+	public void updateCreatedDt(LocalDateTime createdDt) {
+		this.createdDt = createdDt;
+	}
 }

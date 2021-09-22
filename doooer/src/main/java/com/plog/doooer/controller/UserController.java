@@ -1,10 +1,17 @@
 package com.plog.doooer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.plog.doooer.service.UserDTO;
+import com.plog.doooer.service.GetUserInfoequestDTO;
+import com.plog.doooer.service.LoginRequestDTO;
+import com.plog.doooer.service.LoginResponseDTO;
+import com.plog.doooer.service.ResponseDTO;
+import com.plog.doooer.service.SignupRequestDTO;
+import com.plog.doooer.service.UpdateUserInfoRequestDTO;
 import com.plog.doooer.service.UserService;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,17 +24,82 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping("/register")
-	@ApiOperation(value = "유저 등록", notes = "유저를 등록한다.")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "name", value = "이름", required = true, defaultValue = "삼두"),
-			@ApiImplicitParam(name = "pw", value = "패스워드", required = true, defaultValue = "password486"),
-			@ApiImplicitParam(name = "email", value = "이메일", required = true, defaultValue = "admin@3do.com"),
-			@ApiImplicitParam(name = "region", value = "지역", required = true, defaultValue = "서울"),
-			@ApiImplicitParam(name = "major", value = "직무", required = true, defaultValue = "개발자"),})
-	public String register(UserDTO userDto) {
+	@PostMapping("/signup")
+	@ApiOperation(value = "회원 가입", notes = "회원 가입")
+	@ApiImplicitParams({ 
+			@ApiImplicitParam(name = "name", value = "이름", required = true, defaultValue = "김두어"),
+			@ApiImplicitParam(name = "password", value = "패스워드", required = true, defaultValue = "pw486"),
+			@ApiImplicitParam(name = "email", value = "이메일", required = true, defaultValue = "admin@doooer.io")})
+	public ResponseDTO signup(@RequestBody SignupRequestDTO signupRequestDTO) {
+		ResponseDTO resDto = new ResponseDTO();
+		resDto.setResCd("0000");
+		resDto.setResMsg("회원가입에 성공했습니다.");
 		
-		System.out.println(userDto.toString());
-		return userService.register(userDto);
+		return resDto;
+	}
+	
+	@PostMapping("/login")
+	@ApiOperation(value = "로그인", notes = "로그인")
+	@ApiImplicitParams({ 
+			@ApiImplicitParam(name = "email", value = "이메일", required = true, defaultValue = "admin@doooer.io"),
+			@ApiImplicitParam(name = "password", value = "패스워드", required = true, defaultValue = "pw486")})
+	public ResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
+		String token = userService.generateToken(loginRequestDTO);
+		
+		LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+		ResponseDTO resDto = new ResponseDTO();
+		
+		loginResponseDTO.updateId(userService.getUserInfo(token).getId());
+		loginResponseDTO.updateAuth(userService.getUserInfo(token).getAuth());
+		loginResponseDTO.updateEmail(userService.getUserInfo(token).getEmail());
+		loginResponseDTO.updateName(userService.getUserInfo(token).getName());
+		loginResponseDTO.updatePrflImgId(userService.getUserInfo(token).getPrflImgId());
+		loginResponseDTO.updateToken(token);
+		
+		resDto.setResCd("0000");
+		resDto.setResMsg("로그인에 성공했습니다.");
+		resDto.setData(loginResponseDTO);
+		
+		return resDto;
+	}
+	
+	@PostMapping("/updateUserInfo")
+	@ApiOperation(value = "프로필 수정", notes = "프로필 수정")
+	@ApiImplicitParams({})
+	public ResponseDTO updateUserInfo(@RequestBody UpdateUserInfoRequestDTO updateUserInfoRequestDTO) throws Exception {
+		ResponseDTO resDto = new ResponseDTO();
+		
+		userService.updateUserInfo(updateUserInfoRequestDTO);
+		
+		resDto.setResCd("0000");
+		resDto.setResMsg("업데이트에 성공했습니다.");
+		
+		return resDto;
+	}
+	
+	@PostMapping("/getUserInfo")
+	@ApiOperation(value = "프로필 정보", notes = "프로필 정보")
+	@ApiImplicitParams({})
+	public ResponseDTO getUserInfo(@RequestBody GetUserInfoequestDTO getUserInfoequestDTO) throws Exception {
+		ResponseDTO resDto = new ResponseDTO();
+		
+		resDto.setResCd("0000");
+		resDto.setResMsg("조회에 성공했습니다.");
+		resDto.setData(userService.getUserInfo(getUserInfoequestDTO.getToken()));
+		
+		return resDto;
+	}
+	
+	@PostMapping("/getUserDtlInfo")
+	@ApiOperation(value = "프로필 상세 정보", notes = "프로필 상세 정보")
+	@ApiImplicitParams({})
+	public ResponseDTO getUserDtlInfo(@RequestBody GetUserInfoequestDTO getUserInfoequestDTO) throws Exception {
+		ResponseDTO resDto = new ResponseDTO();
+				
+		resDto.setResCd("0000");
+		resDto.setResMsg("조회에 성공했습니다.");
+		resDto.setData(userService.getUserDtlInfo(getUserInfoequestDTO.getToken()));
+		
+		return resDto;
 	}
 }
