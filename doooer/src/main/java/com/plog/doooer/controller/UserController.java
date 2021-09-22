@@ -1,14 +1,12 @@
 package com.plog.doooer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.plog.doooer.common.PlogException;
-import com.plog.doooer.common.PlogExceptionEnum;
+import com.plog.doooer.service.GetUserInfoequestDTO;
 import com.plog.doooer.service.LoginRequestDTO;
 import com.plog.doooer.service.LoginResponseDTO;
 import com.plog.doooer.service.ResponseDTO;
@@ -79,4 +77,29 @@ public class UserController {
 		return resDto;
 	}
 	
+	@PostMapping("/getUserInfo")
+	@ApiOperation(value = "프로필 정보", notes = "프로필 정보")
+	@ApiImplicitParams({})
+	public ResponseDTO getUserInfo(@RequestBody GetUserInfoequestDTO getUserInfoequestDTO) throws Exception {
+		ResponseDTO resDto = new ResponseDTO();
+		
+		resDto.setResCd("0000");
+		resDto.setResMsg("조회에 성공했습니다.");
+		resDto.setData(userService.getUserInfo(getUserInfoequestDTO.getToken()));
+		
+		return resDto;
+	}
+	
+	@PostMapping("/getUserDtlInfo")
+	@ApiOperation(value = "프로필 상세 정보", notes = "프로필 상세 정보")
+	@ApiImplicitParams({})
+	public ResponseDTO getUserDtlInfo(@RequestBody GetUserInfoequestDTO getUserInfoequestDTO) throws Exception {
+		ResponseDTO resDto = new ResponseDTO();
+				
+		resDto.setResCd("0000");
+		resDto.setResMsg("조회에 성공했습니다.");
+		resDto.setData(userService.getUserDtlInfo(getUserInfoequestDTO.getToken()));
+		
+		return resDto;
+	}
 }

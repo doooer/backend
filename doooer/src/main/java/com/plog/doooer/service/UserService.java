@@ -87,10 +87,35 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public UserEntity getUserInfo(String token)  {
-		String userEmail = jwtUtil.extractUsername(token);
-		UserEntity userEntity = userRepository.findAllByEmail(userEmail);
-	
+		String userEmail;
+		UserEntity userEntity;
+		
+		try {
+			userEmail = jwtUtil.extractUsername(token);
+			userEntity = userRepository.findAllByEmail(userEmail);
+		} catch (Exception e) {
+			throw new PlogException(PlogExceptionEnum.SELECT_01);
+		}
+		
 		return userEntity;
+	}
+	
+	public UserDtlEntity getUserDtlInfo(String token)  {
+		
+		String userEmail;
+		UserEntity userEntity;
+		UserDtlEntity userDtlEntity;
+		
+		try {
+			userEmail = jwtUtil.extractUsername(token);
+			userEntity = userRepository.findAllByEmail(userEmail);
+			userDtlEntity = userDtlRepository.findAllById(userEntity.getId());
+		} catch (Exception e) {
+			throw new PlogException(PlogExceptionEnum.SELECT_01);
+		}
+		
+	
+		return userDtlEntity;
 	}
 	
 	@Override
