@@ -1,4 +1,4 @@
-package common;
+package com.plog.doooer.common;
 
 import lombok.Getter;
 

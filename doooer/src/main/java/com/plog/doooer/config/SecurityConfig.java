@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private UserService userService;
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
-
+	
 	@Autowired
 	public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
 	    this.userService = userService;
@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 * */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests()
+		http.cors().and().csrf().disable().authorizeRequests()
 			//.antMatchers("/api/authenticate").permitAll()
 			.antMatchers("/api/signup").permitAll() 
 			.antMatchers("/api/login").permitAll()
@@ -66,8 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/webjars/**").permitAll()
 			.antMatchers("/api/sendEmail").permitAll()
 			.antMatchers("/api/checkKey").permitAll()
-			.anyRequest().authenticated()
-			//.and().exceptionHandling()
+			//.anyRequest().authenticated()
+			.anyRequest().permitAll()
+			.and().exceptionHandling()
 			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}

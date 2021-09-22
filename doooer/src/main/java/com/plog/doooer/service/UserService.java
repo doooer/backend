@@ -17,46 +17,73 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.plog.doooer.common.PlogException;
+import com.plog.doooer.common.PlogExceptionEnum;
+import com.plog.doooer.domain.UserDtlEntity;
 import com.plog.doooer.domain.UserEntity;
+import com.plog.doooer.respository.UserDtlRepository;
 import com.plog.doooer.respository.UserRepository;
 import com.plog.doooer.util.JwtUtil;
-
-import common.PlogException;
-import common.PlogExceptionEnum;
 
 @Service
 public class UserService implements UserDetailsService {
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
+	UserDtlRepository userDtlRepository;
+	
+	@Autowired
 	private JwtUtil jwtUtil;
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Transactional
-	public String signup(SignupRequestDTO signupRequestDTO)  {
+	public void signup(SignupRequestDTO signupRequestDTO) {
 		
 		try {
 			UserEntity user = signupRequestDTO.toEntity();
+			UserDtlEntity userDtl = new UserDtlEntity();
 			
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			
-			//user.setPassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
-			//user.setCreatedDt(LocalDateTime.now());
-			//user.setAuth("MEMBER");
 			
 			user.updatePassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
 			user.updateCreatedDt(LocalDateTime.now());			
 			user.updateAuth("MEMBER");
-			
 			userRepository.save(user);
-		} catch (Exception e) {
-			e.printStackTrace();
 			
-			return "ERROR";
+			userDtl.setId(userRepository.findIdByEmail(user.getEmail()).getId());
+			userDtlRepository.save(userDtl);
+		} catch (Exception e) {
+			throw new PlogException(PlogExceptionEnum.UPDATE_01);
 		}
+	}
+	
+	@Transactional
+	public void updateUserInfo(UpdateUserInfoRequestDTO updateUserInfoRequestDTO ) {
 		
-		return "SUCCESS";
+		UserDtlEntity userDtl = userDtlRepository.findAllById(updateUserInfoRequestDTO.getId());
+		UserEntity user = userRepository.findAllById(updateUserInfoRequestDTO.getId());
+		
+		try {
+			user.updateName(updateUserInfoRequestDTO.getName());
+			user.updatePrflImgId(updateUserInfoRequestDTO.getPrflImgId());
+			user.updateJobCd(updateUserInfoRequestDTO.getJobCd());
+			user.updateIntroduce(updateUserInfoRequestDTO.getIntroduce());
+
+			userRepository.save(user);
+			
+			userDtl.updateOpenChatUrl(updateUserInfoRequestDTO.getOpenChatUrl());
+			userDtl.updateRefLink(updateUserInfoRequestDTO.getRefLink());
+			userDtl.updateRefLink2(updateUserInfoRequestDTO.getRefLink2());
+			userDtl.updateEducationList(updateUserInfoRequestDTO.getEducationList());
+			userDtl.updateCertificateList(updateUserInfoRequestDTO.getCertificateList());
+			userDtl.updateAwardList(updateUserInfoRequestDTO.getAwardList());
+			userDtl.updateUseTech(updateUserInfoRequestDTO.getUseTech());
+			
+			userDtlRepository.save(userDtl);
+		} catch (Exception e) {
+			throw new PlogException(PlogExceptionEnum.UPDATE_01);
+		}
 	}
 	
 	public UserEntity getUserInfo(String token)  {
@@ -71,7 +98,7 @@ public class UserService implements UserDetailsService {
 		UserEntity userEntity = userRepository.findByEmail(userEmail);
 		
 		if (userEntity == null) {
-			throw new PlogException(PlogExceptionEnum.SECURITY_02);
+			throw new PlogException(PlogExceptionEnum.LOGIN_01);
 		}
 		
 		List<GrantedAuthority> authorities = new ArrayList<>();
@@ -79,7 +106,6 @@ public class UserService implements UserDetailsService {
 		authorities.add(new SimpleGrantedAuthority(userEntity.getAuth()));
 		
 		return new User(userEntity.getEmail(), userEntity.getPassword(), authorities);
-		//return new User(userEntity.getEmail(), userEntity.getPw(), new ArrayList<>());
 	}
 	
 	public String generateToken(LoginRequestDTO loginRequestDTO) throws Exception {
@@ -88,8 +114,7 @@ public class UserService implements UserDetailsService {
 					new UsernamePasswordAuthenticationToken(loginRequestDTO.getUserName(), loginRequestDTO.getPassword())
 			);
 		} catch (Exception ex) {
-			//throw new Exception("inavalid username/password");
-			throw new PlogException(PlogExceptionEnum.SECURITY_02);
+			throw new PlogException(PlogExceptionEnum.LOGIN_01);
 		}
 		
 		return jwtUtil.generateToken(loginRequestDTO.getUserName());

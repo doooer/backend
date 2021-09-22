@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Table(name = "tb_user_dtl")
+@Table(name = "TB_USER_DTL")
 @Entity
 @Getter
 @Setter
@@ -28,7 +28,6 @@ public class UserDtlEntity {
 
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // mysql의 AUTO_INCREMENT를 그대로 사용
 	private Long id;
 
 	@Column(name = "bkgrd_img_id", length = 255)
@@ -98,6 +97,7 @@ public class UserDtlEntity {
 		this.createdDt = created_dt;
 		this.updatedDt = updated_dt;
 	}
+
 	public void updateBkgrdImgId(String bkgrdImgId) {
 		this.bkgrdImgId = bkgrdImgId;
 	}

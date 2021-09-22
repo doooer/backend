@@ -1,20 +1,18 @@
-package common;
-
-import java.nio.file.AccessDeniedException;
+package com.plog.doooer.common;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.plog.doooer.domain.PlogExceptionEntity;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class PlogExceptionAdvice {
     @ExceptionHandler(PlogException.class)
     public ResponseEntity<PlogExceptionEntity> exceptionHandler(HttpServletRequest request, final PlogException e) {
-    	System.out.println("우수연 바보");
         return ResponseEntity
                 .status(e.getError().getStatus())
                 .body(PlogExceptionEntity.builder()
@@ -25,7 +23,6 @@ public class PlogExceptionAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<PlogExceptionEntity> exceptionHandler(HttpServletRequest request, final RuntimeException e) {
-        e.printStackTrace();
         return ResponseEntity
                 .status(PlogExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(PlogExceptionEntity.builder()
@@ -46,7 +43,6 @@ public class PlogExceptionAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<PlogExceptionEntity> exceptionHandler(HttpServletRequest request, final Exception e) {
-        e.printStackTrace();
         return ResponseEntity
                 .status(PlogExceptionEnum.INTERNAL_SERVER_ERROR.getStatus())
                 .body(PlogExceptionEntity.builder()

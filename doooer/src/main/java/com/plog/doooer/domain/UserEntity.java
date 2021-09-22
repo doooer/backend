@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Table(name = "tb_user")
+@Table(name = "TB_USER")
 @Entity
 @Getter
 @Setter
@@ -31,45 +31,46 @@ public class UserEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // mysql의 AUTO_INCREMENT를 그대로 사용
 	private Long id;
 
-	@Column(length = 255, nullable = false)
+	@Column(name = "name", length = 255, nullable = false)
 	private String name;
 
-	@Column(length = 255, unique = true, nullable = false)
+	@Column(name = "email", length = 255, unique = true, nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(length = 255)
+	@Column(name = "job_cd", length = 255)
 	private String jobCd;
 	
-	@Column(length = 255)
+	@Column(name = "prfl_img_id", length = 255)
 	private String prflImgId;
 	 
-	@Column(length = 300)
+	@Column(name = "introduce", length = 300)
 	private String introduce;
 	
 	@Column(name = "auth")
 	private String auth;
 
-	@Column(updatable = false)
+	@Column(name = "created_dt", updatable = false)
 	@CreatedDate
 	private LocalDateTime createdDt;
 	
+	@Column(name = "updated_dt")
 	@LastModifiedDate
 	private LocalDateTime updatedDt;
 
 	@Builder
-	public UserEntity(String name, String password, String email, String job_cd, String prfl_img_id, String introduce, String auth, LocalDateTime created_dt, LocalDateTime updated_dt) { 
+	public UserEntity(String name, String password, String email, String jobCd, String prflImgId, String introduce, String auth, LocalDateTime createdDt, LocalDateTime updatedDt) { 
 		this.name = name; 
 		this.password = password;
 		this.email = email;
-		this.jobCd = job_cd;
-		this.prflImgId = prfl_img_id;
+		this.jobCd = jobCd;
+		this.prflImgId = prflImgId;
 		this.introduce = introduce;
 		this.auth = auth;
-		this.createdDt = created_dt;
-		this.updatedDt = updated_dt;
+		this.createdDt = createdDt;
+		this.updatedDt = updatedDt;
 	}
 	
 	public void updateAuth(String auth) {
@@ -80,6 +81,20 @@ public class UserEntity {
 		this.password = password;
 	}
 	
+	public void updateName(String name) {
+		this.name = name;
+	}
+	
+	public void updateIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public void updatePrflImgId(String prflImgId) {
+		this.prflImgId = prflImgId;
+	}
+	public void updateJobCd(String jobCd) {
+		this.jobCd = jobCd;
+	}
 	public void updateCreatedDt(LocalDateTime createdDt) {
 		this.createdDt = createdDt;
 	}
